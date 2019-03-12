@@ -1,0 +1,37 @@
+How does text translation work?
+There are two main technologies used for text translation: the legacy one, Statistical Machine Translation (SMT), and the newer generation one, Neural Machine Translation (NMT).
+
+Statistical Machine Translation
+Microsoft Translator implementation of Statistical Machine Translation (SMT) is built on more than a decade of natural-language research at Microsoft. Rather than writing hand-crafted rules to translate between languages, modern translation systems approach translation as a problem of learning the transformation of text between languages from existing human translations and leveraging recent advances in applied statistics and machine learning.
+
+So-called “parallel corpora” act as a modern Rosetta Stone in massive proportions, providing word, phrase, and idiomatic translations in context for many language pairs and domains. Statistical modeling techniques and efficient algorithms help the computer address the problem of decipherment (detecting the correspondences between source and target language in the training data) and decoding (finding the best translation of a new input sentence). Microsoft Translator unites the power of statistical methods with linguistic information to produce models that generalize better and lead to more comprehensible translations.
+
+Because of this approach, which does not rely on dictionaries or grammatical rules, it provides the best translations of phrases where it can use the context around a given word versus trying to perform single word translations. For single words translations, the bilingual dictionary was developed and is accessible through www.bing.com/translator.
+
+Neural network translation
+Continuous improvements to translation are important. However, performance improvements have plateaued with SMT technology since the mid-2010s. By leveraging the scale and power of Microsoft’s AI supercomputer, specifically the Microsoft Cognitive Toolkit, Microsoft Translator now offers neural network (LSTM) based translation that enables a new decade of translation quality improvement.
+
+These neural network models are available for all speech languages through the Microsoft Translator Speech API, on the try and compare site translate.ai, and through the text API by using the ‘generalnn’ category ID.
+
+Neural network translations fundamentally differ in how they are performed compared to the traditional SMT ones.
+
+The following animation depicts the various steps neural network translations go through to translate a sentence. Because of this approach, the translation will take into context the full sentence, versus only a few words sliding window that SMT technology uses and will produce more fluid and human-translated looking translations.
+
+Based on the neural-network training, each word is coded along a 500-dimensions vector (a) representing its unique characteristics within a particular language pair (e.g. English and Chinese). Based on the language pairs used for training, the neural network will self-define what these dimensions should be. They could encode simple concepts like gender (feminine, masculine, neutral), politeness level (slang, casual, written, formal, etc.), type of word (verb, noun, etc.), but also any other non-obvious characteristics as derived from the training data.
+
+The steps neural network translations go through are the following:
+
+Each word, or more specifically the 500-dimension vector representing it, goes through a first layer of “neurons” that will encode it in a 1000-dimension vector (b) representing the word within the context of the other words in the sentence.
+Once all words have been encoded one time into these 1000-dimension vectors, the process is repeated several times, each layer allowing better fine-tuning of this 1000-dimension representation of the word within the context of the full sentence (contrary to SMT technology that can only take into consideration a 3 to 5 words window)
+The final output matrix is then used by the attention layer (i.e. a software algorithm) that will use both this final output matrix and the output of previously translated words to define which word, from the source sentence, should be translated next. It will also use these calculations to potentially drop unnecessary words in the target language.
+The decoder (translation) layer, translates the selected word (or more specifically the 1000-dimension vector representing this word within the context of the full sentence) in its most appropriate target language equivalent. The output of this last layer (c) is then fed back into the attention layer to calculate which next word from the source sentence should be translated.
+
+
+In the example depicted in the animation, the context-aware 1000-dimension model of “the” will encode that the noun (house) is a feminine word in French (la maison). This will allow the appropriate translation for “the” to be “la” and not “le” (singular, male) or “les” (plural) once it reaches the decoder (translation) layer.
+
+The attention algorithm will also calculate, based on the word(s) previously translated (in this case “the”), that the next word to be translated should be the subject (“house”) and not an adjective (“blue”). In can achieve this because the system learned that English and French invert the order of these words in sentences. It would have also calculated that if the adjective were to be “big” instead of a color, that it should not invert them (“the big house” => “la grande maison”).
+
+Thanks to this approach, the final output is, in most cases, more fluent and closer to a human translation than an SMT-based translation could have ever been.
+
+
+
